@@ -155,3 +155,4 @@ H:\proyecto_apex2\InvoiceManagement\InvoiceManagement.Api\obj\Debug\net9.0\Invoi
 H:\proyecto_apex2\InvoiceManagement\InvoiceManagement.Api\obj\Debug\net9.0\InvoiceManagement.Api.genruntimeconfig.cache
 H:\proyecto_apex2\InvoiceManagement\InvoiceManagement.Api\obj\Debug\net9.0\ref\InvoiceManagement.Api.dll
 H:\proyecto_apex2\InvoiceManagement\InvoiceManagement.Api\bin\Debug\net9.0\bd_exam_invoices.json
+H:\proyecto_apex2\InvoiceManagement\InvoiceManagement.Api\obj\Debug\net9.0\InvoiceManagement.Api.sourcelink.json

@@ -28,14 +28,19 @@ namespace InvoiceManagement.Api.Controllers
             {
                 var cutoffDate = DateTime.Now.AddDays(-30);
 
-                var overdueInvoices = await _context.Invoices
+                // Primero traemos las facturas con Include
+                var allInvoices = await _context.Invoices
                     .Include(i => i.Customer)
                     .Include(i => i.CreditNotes)
                     .Include(i => i.InvoicePayment)
-                    .Where(i => i.IsConsistent && // Solo facturas consistentes
-                               i.PaymentDueDate < cutoffDate && // Más de 30 días vencidas
-                               i.PaymentStatus != "Paid" && // Sin pago
-                               !i.CreditNotes.Any()) // Sin notas de crédito
+                    .Where(i => i.IsConsistent && 
+                               i.PaymentDueDate < cutoffDate && 
+                               i.PaymentStatus != "Paid")
+                    .ToListAsync();
+
+                // Luego filtramos en memoria las que no tienen notas de crédito
+                var overdueInvoices = allInvoices
+                    .Where(i => !i.CreditNotes.Any())
                     .Select(i => new
                     {
                         i.Id,
@@ -53,7 +58,7 @@ namespace InvoiceManagement.Api.Controllers
                         }
                     })
                     .OrderByDescending(i => i.DaysOverdue)
-                    .ToListAsync();
+                    .ToList();
 
                 var totalAmount = overdueInvoices.Sum(i => i.TotalAmount);
                 var averageDaysOverdue = overdueInvoices.Any() 
@@ -153,10 +158,15 @@ namespace InvoiceManagement.Api.Controllers
         {
             try
             {
-                var inconsistentInvoices = await _context.Invoices
+                // Traemos todas las facturas inconsistentes con sus detalles
+                var allInconsistentInvoices = await _context.Invoices
                     .Include(i => i.Customer)
                     .Include(i => i.InvoiceDetails)
                     .Where(i => !i.IsConsistent)
+                    .ToListAsync();
+
+                // Procesamos en memoria para calcular diferencias
+                var inconsistentInvoices = allInconsistentInvoices
                     .Select(i => new
                     {
                         i.Id,
@@ -171,10 +181,10 @@ namespace InvoiceManagement.Api.Controllers
                             i.Customer.CustomerEmail,
                             i.Customer.CustomerRun
                         },
-                        ProductCount = i.InvoiceDetails.Count()
+                        ProductCount = i.InvoiceDetails.Count
                     })
                     .OrderByDescending(i => Math.Abs(i.Difference))
-                    .ToListAsync();
+                    .ToList();
 
                 var totalDifference = inconsistentInvoices.Sum(i => Math.Abs(i.Difference));
                 var averageDifference = inconsistentInvoices.Any() 
