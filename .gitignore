@@ -1,0 +1,33 @@
+# .NET
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+Migrations/
+*.user
+*.suo
+*.cache
+*.log
+
+# React
+node_modules/
+build/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vs/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
